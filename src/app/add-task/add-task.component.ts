@@ -2,13 +2,14 @@ import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@an
 import { TaskModelModule } from '../Model/task-model.module';
 import { ParentTaskModelModule } from '../Model/parent-task-model.module';
 import { TaskserviceService } from '../taskservice.service';
-import { FormArray, Form, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, Form, FormGroup, ReactiveFormsModule, NgForm } from '@angular/forms';
 import { FormControl } from '@angular/forms'
 
 import { Input } from '@angular/core';
 import { Router, Route, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { of } from 'rxjs';
+import { ITaskService } from '../taskservice.interface'
 
 @Component({
   selector: 'app-add-task',
@@ -20,8 +21,14 @@ export class AddTaskComponent implements OnInit {
   
   public taskModel: TaskModelModule; 
   public noParentAssociated : boolean; 
+  @ViewChild('f') f: NgForm;  
+  @ViewChild('taskName') taskName: FormControl;
+  taskvalider = (): boolean => this.taskName.valid;
+  valider = (): boolean => this.f.form.valid;
+  error : any = { isError: false, errorMsg: '' }
   
-  constructor(private taskService: TaskserviceService, private taskRouter: Router, private activeRoute: ActivatedRoute) {    
+  
+  constructor(private taskService: ITaskService, private taskRouter: Router, private activeRoute: ActivatedRoute) {    
      this.taskModel = new TaskModelModule();
      this.taskModel.ParentTaskModelModule = new ParentTaskModelModule();       
     console.log("From Constructor" + this.taskModel.TaskDescripton);
@@ -55,6 +62,8 @@ export class AddTaskComponent implements OnInit {
 
   AddEditTask() 
   {
+
+    if(this.error.isError) return;
     if(!this.taskModel.TaskId)
     {      
       console.log("Task Details : " + this.taskModel.TaskId);
@@ -81,5 +90,24 @@ export class AddTaskComponent implements OnInit {
       this.taskService.UpdateTaskDetails(this.taskModel).subscribe(x => {
         console.log("Task Saved...")});
     }
+  }
+
+  ValidateStartEndDates()
+  {    
+    if(this.taskModel.StartDate && this.taskModel.EndDate)
+    {
+      console.log("Validation CAlled")
+        if(this.taskModel.EndDate < this.taskModel.StartDate)
+        {
+          this.error = {isError:true, errorMsg:'End Date Cannot be lesser than Start Date'}
+        }
+        else
+        {
+          this.error = {isError:false, errorMsg:''}
+        }
+        console.log(this.error)
+
+    }
+
   }
 }

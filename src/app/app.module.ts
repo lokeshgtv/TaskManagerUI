@@ -12,6 +12,7 @@ import { TaskFilterPipe } from './Filters/TaskFilter';
 import { TaskserviceService } from './taskservice.service';
 import { EdittaskComponent } from './edittask/edittask.component';
 import { DatePipe } from '@angular/common';
+import { ITaskService } from './taskservice.interface'
 
 @NgModule({
   declarations: [
@@ -28,7 +29,11 @@ import { DatePipe } from '@angular/common';
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [ TaskserviceService, TaskFilterPipe, DatePipe  ],
+  providers: 
+  [
+    {provide: ITaskService,useClass:TaskserviceService},
+    TaskFilterPipe, DatePipe  
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

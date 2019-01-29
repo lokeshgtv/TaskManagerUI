@@ -1,8 +1,13 @@
-<form (ngSubmit)="AddEditTask()"  class="form-horizontal">  
+<form (ngSubmit)="f.form.valid && AddEditTask()" #f="ngForm" class="form-horizontal">  
     <div class="form-group">
       <label class="col-sm-2 Bold">Task:</label>
       <div class="col-sm-6">
-        <input type="text" class="form-control" placeholder="Task Description" [(ngModel)]="taskModel.TaskDescripton" name="tName"/>
+        <input required type="text" class="form-control" placeholder="Task Description" [(ngModel)]="taskModel.TaskDescripton" #taskName="ngModel" name="tName" id="tName"/>
+        <div *ngIf="f.submitted && taskName.invalid" class="alert alert-danger">
+            <div *ngIf="taskName.errors.required">
+                Task Description is required.
+            </div>
+        </div>      
       </div>
       </div>              
     <div class="form-group"> 
@@ -20,13 +25,22 @@
       <div class="form-group">
           <label class="col-sm-2 Bold">Start Date:</label>
           <div class="col-sm-6">
-              <input type="date" class="form-control" [ngModel]="taskModel.StartDate | date:'yyyy-MM-dd'" (ngModelChange)="taskModel.StartDate = $event" name="Start_Date"/>
+              <input type="date" class="form-control" [ngModel]="taskModel.StartDate | date:'yyyy-MM-dd'" (ngModelChange)="taskModel.StartDate = $event" name="Start_Date" #startDate="ngModel" required (blur)="ValidateStartEndDates()"/>
+              <div *ngIf="f.submitted && startDate.errors?.required" class="alert alert-danger">
+                    Start Date is required.
+                </div>
           </div>
       </div>  
       <div class="form-group">
           <label class="col-sm-2 Bold">End Date:</label>
           <div class="col-sm-6">
-              <input type="date" class="form-control" [ngModel]="taskModel.EndDate | date:'yyyy-MM-dd'" (ngModelChange)="taskModel.EndDate = $event" name="end_date"/>
+              <input type="date" class="form-control" [ngModel]="taskModel.EndDate | date:'yyyy-MM-dd'" (ngModelChange)="taskModel.EndDate = $event" name="end_date" #endDate="ngModel" required (blur)="ValidateStartEndDates()"/>
+              <div *ngIf="f.submitted && endDate.errors?.required" class="alert alert-danger">
+                    End Date is required.
+                </div>
+                <div *ngIf="f.submitted && error.isError" class="alert alert-danger">
+                        {{error.errorMsg}}
+                    </div>
           </div>
       </div>
       <div class="form-group">

@@ -16,21 +16,30 @@
           <div class="form-group">             
               <label class="col-sm-1 Bold">Priority From :</label>
               <div class="col-sm-1">
-                  <input type="text" class="form-control" [(ngModel)]="filterTaskDetails.Priority"  name="tFilterPriorityFrom" (input)="OnSearchCriteriaChanged($event.target.value)"/>
+                  <input type="number" min="1" max="30" class="form-control" [(ngModel)]="filterTaskDetails.Priority"  name="tFilterPriorityFrom" (input)="OnSearchCriteriaChanged($event.target.value)"  #priorityFrom="ngModel"/>                  
+                  <div *ngIf="isPriorityFromRangeError" class="alert alert-danger">
+                      Value Should be between 1 and 30.
+                   </div>
               </div>
               <label class="col-sm-1 Bold">Priority To :</label>
               <div class="col-sm-1">
-                  <input type="text" class="form-control" [(ngModel)]="filterTaskDetails.PriorityTo" name="tFilterPriorityTo" (input)="OnSearchCriteriaChanged($event.target.value)"/>
+                  <input type="number" min="1" max="30"  class="form-control" [(ngModel)]="filterTaskDetails.PriorityTo" name="tFilterPriorityTo" (input)="OnSearchCriteriaChanged($event.target.value)" #priorityTo="ngModel"/>
+                  <div *ngIf="isPriorityToRangeError" class="alert alert-danger">
+                      Value Should be between 1 and 30.
+                   </div>
               </div>
               <label class="col-sm-1 Bold">Start Date :</label>
               <div class="col-sm-3">
                   <input type="date" class="form-control" [ngModel]="filterTaskDetails.StartDate| date:'yyyy-MM-dd'" 
-                  (ngModelChange)="filterTaskDetails.StartDate = $event" name="tFilterStartDate" (input)="OnSearchCriteriaChanged($event.target.value)"/>
+                  (ngModelChange)="filterTaskDetails.StartDate = $event" name="tFilterStartDate" (input)="OnSearchCriteriaChanged($event.target.value)"/>                 
               </div>
               <label class="col-sm-1 Bold">End Date :</label>
               <div class="col-sm-3">
                   <input type="date" class="form-control" [ngModel]="filterTaskDetails.EndDate| date:'yyyy-MM-dd'" 
                   (ngModelChange)="filterTaskDetails.EndDate = $event" name="tFilterEndDate" (input)="OnSearchCriteriaChanged($event.target.value)"/>
+                  <div *ngIf="error.isError" class="alert alert-danger">
+                      {{error.errorMsg}}
+                  </div>
               </div>
             </div>  
           </form>
@@ -55,7 +64,7 @@
           <td>{{taskInfo.EndDate|date:"dd/MMM/yyyy"}}</td>
           <td>
             <div>
-              <button class="btn-primary" (click)="OnEdit(taskInfo)" [disabled]="taskInfo.IsFinished">Edit</button>             
+              <button class="btn-primary"  (click)="OnEdit(taskInfo)" [disabled]="taskInfo.IsFinished">Edit</button>             
             </div>
           </td>
           <td>

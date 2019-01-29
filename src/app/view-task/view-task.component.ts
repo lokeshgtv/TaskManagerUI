@@ -6,6 +6,7 @@ import { TaskFilterPipe } from '../Filters/TaskFilter'
 import { ParentTaskModelModule } from '../Model/parent-task-model.module';
 import { ActivatedRoute,Router } from '@angular/router';
 import { RouterPreloader } from '@angular/router/src/router_preloader';
+import { ITaskService } from '../taskservice.interface'
 
 @Component({
   selector: 'app-view-task',
@@ -20,8 +21,11 @@ export class ViewTaskComponent implements OnInit {
 
   @Input()
   AllTasksInfo: TaskModelModule[];
+  error : any = { isError: false, errorMsg: '' }
+  isPriorityFromRangeError : boolean;
+  isPriorityToRangeError : boolean;
 
-  constructor(private taskService: TaskserviceService, private taskFilering : TaskFilterPipe, private router:Router) { 
+  constructor(private taskService: ITaskService, private taskFilering : TaskFilterPipe, private router:Router) { 
     this.filterTaskDetails = new TaskModelModule();
     this.filterTaskDetails.ParentTaskModelModule = new ParentTaskModelModule();
 
@@ -45,7 +49,9 @@ export class ViewTaskComponent implements OnInit {
 
   OnSearchCriteriaChanged(searchValue : string ) 
   {     
-
+    this.ValidateStartEndDates();
+    this.ValidatePriorityRange();
+    if(this.error.isError || this.isPriorityFromRangeError || this.isPriorityToRangeError) return;
     this.filteredDetails = this.taskFilering.transform(this.AllTasksInfo, this.filterTaskDetails);      
   }
 
@@ -61,5 +67,43 @@ export class ViewTaskComponent implements OnInit {
     //   console.log("Updated Task to End State...")});
   }
 
+  ValidateStartEndDates()
+  {    
+    if(this.filterTaskDetails.StartDate && this.filterTaskDetails.EndDate)
+    {
+      console.log("Validation CAlled")
+        if(this.filterTaskDetails.EndDate < this.filterTaskDetails.StartDate)
+        {
+          this.error = {isError:true, errorMsg:'End Date Cannot be lesser than Start Date'}
+        }
+        else
+        {
+          this.error = {isError:false, errorMsg:''}
+        }
+        console.log(this.error)
+
+    }
+  }
+
+  ValidatePriorityRange()
+  {
+    console.log(this.filterTaskDetails.Priority);
+    console.log(this.filterTaskDetails.PriorityTo);
+
+      this.isPriorityFromRangeError = false;
+      this.isPriorityToRangeError = false;
+      if(this.filterTaskDetails.Priority)
+      {
+        if(this.filterTaskDetails.Priority < 1 || 
+          this.filterTaskDetails.Priority > 30)
+            this.isPriorityFromRangeError = true;
+      }
+      if(this.filterTaskDetails.PriorityTo)
+      {
+        if(this.filterTaskDetails.PriorityTo < 1 || 
+          this.filterTaskDetails.PriorityTo > 30)
+            this.isPriorityToRangeError = true;
+      }
+  }
 
 }
