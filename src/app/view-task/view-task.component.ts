@@ -22,8 +22,8 @@ export class ViewTaskComponent implements OnInit {
   @Input()
   AllTasksInfo: TaskModelModule[];
   error : any = { isError: false, errorMsg: '' }
-  isPriorityFromRangeError : boolean;
-  isPriorityToRangeError : boolean;
+  isPriorityFromRangeError : boolean = false;
+  isPriorityToRangeError : boolean = false;
 
   constructor(private taskService: ITaskService, private taskFilering : TaskFilterPipe, private router:Router) { 
     this.filterTaskDetails = new TaskModelModule();
@@ -71,6 +71,8 @@ export class ViewTaskComponent implements OnInit {
   {    
     if(this.filterTaskDetails.StartDate && this.filterTaskDetails.EndDate)
     {
+      console.log(this.filterTaskDetails.StartDate)
+      console.log(this.filterTaskDetails.EndDate)
       console.log("Validation CAlled")
         if(this.filterTaskDetails.EndDate < this.filterTaskDetails.StartDate)
         {
@@ -94,12 +96,14 @@ export class ViewTaskComponent implements OnInit {
       this.isPriorityToRangeError = false;
       if(this.filterTaskDetails.Priority)
       {
+        console.log(this.filterTaskDetails.Priority)
         if(this.filterTaskDetails.Priority < 1 || 
           this.filterTaskDetails.Priority > 30)
             this.isPriorityFromRangeError = true;
       }
       if(this.filterTaskDetails.PriorityTo)
       {
+        console.log(this.filterTaskDetails.PriorityTo)
         if(this.filterTaskDetails.PriorityTo < 1 || 
           this.filterTaskDetails.PriorityTo > 30)
             this.isPriorityToRangeError = true;

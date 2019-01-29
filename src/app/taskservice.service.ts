@@ -3,55 +3,26 @@ import { TaskModelModule } from './Model/task-model.module';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/internal/Observable';
 import { ParentTaskModelModule } from './Model/parent-task-model.module';
+import { ITaskService } from './taskservice.interface'
 import { of } from 'rxjs';
-// import { HttpHeaders } from '@angular/common/http';
-// import { URLSearchParams } from 'url';
-// import { HttpParams } from '@angular/common/http';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class TaskserviceService {
+// @Injectable({
+//   providedIn: 'root'
+// })
+@Injectable()
+export class TaskserviceService extends ITaskService {
 
-  constructor(private httpService: HttpClient) { }
+  constructor(private httpService: HttpClient) { super(); }
 
   getAllTasks(): Observable<TaskModelModule[]> {  
 
       console.log("Test Connection")
       return this.httpService.get<TaskModelModule[]>("http://localhost/TaskManagerService/api/taskmodelmodules");
-    
-    // var tasks = this.httpService.get("http://localhost:59757/api/taskmodelmodules")
-    //   .map((resp) =>
-    //   {
-    //       return resp.json();
-    //   })
-    //   .map(tasks : Array<any>)
-    //   .map(item =>
-    //       {
-    //           var task = new TaskModelModule()
-    //           task.TaskId = item.TaskId;
-    //           task.TaskDescripton = item.TaskDescripton;
-    //           task.Priority = item.Priority;
-    //           task.StartDate = item.StartDate;
-    //           task.EndDate = item.EndDate;
-    //           task.ParentTaskModelModule = new ParentTaskModelModule();
-    //           task.ParentTaskModelModule.ParentTaskId = item.ParentTaskModelModule.ParentTaskId;
-    //           task.ParentTaskModelModule.ParentTaskName = item.ParentTaskModelModule.ParentTaskName;
-    //           console.log("From Mapper: " + task);
-    //           return task;
-
-    //       });
-    //   });
-
-    // return of(tasks);
-    //return tasks;
-    //return of(this.taskData);
   }
 
   getTaskById(id:number): Observable<TaskModelModule> {
 
     return this.httpService.get<TaskModelModule>("http://localhost/TaskManagerService/api/taskmodelmodules/"+id);
-    //return of(this.taskData.find(x => x.TaskId == id));
   }
 
   AddTaskDetails(task: TaskModelModule) {
@@ -60,9 +31,7 @@ export class TaskserviceService {
     return this.httpService.post("http://localhost/TaskManagerService/api/taskmodelmodules", task);
   }
 
-  UpdateTaskDetails(task: TaskModelModule) {
-
-    //return this.httpService.put("http://localhost/TaskManagerService/api/taskmodelmodules/"+task.TaskId,task);    
+  UpdateTaskDetails(task: TaskModelModule) {   
     return this.httpService.post("http://localhost/TaskManagerService/api/taskmodelmodules", task);
   }
 
